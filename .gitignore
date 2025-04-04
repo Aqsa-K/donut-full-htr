@@ -169,3 +169,28 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+# macOS system files
+.DS_Store
+
+data/
+notebooks/
+
+# Parquet files
+*.parquet
+
+# JSON Lines files
+*.jsonl
+*.json
+
+# text and csv files
+*.txt
+*.csv
+
+# Image files
+*.jpg
+*.jpeg
+*.png
+
+# Jupyter Notebook files
+*.ipynb
+*.ipynb_checkpoints/
