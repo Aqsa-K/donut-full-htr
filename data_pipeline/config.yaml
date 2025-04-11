@@ -1,0 +1,5 @@
+repo_id: "AqsaK/testdataHW3"
+readme_path: "README.md"
+dataset_infos_path: "dataset_infos.json"
+gitattributes_path: ".gitattributes"
+parquet_path: "./train.parquet"
