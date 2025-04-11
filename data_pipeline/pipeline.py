@@ -6,8 +6,8 @@ import yaml
 
 
 def run_pipeline(repo_id, parquet_path, dataset_infos_path, readme_path, gitattributes_path):
-    df = pd.read_csv("../data_preprocessing/original_data/1880_census_databasuttag.txt", sep="\t", dtype=str, encoding="latin1")
-    download_images_as_jpg(df, "BILDNR" )  # Downloads to ./images/
+    # df = pd.read_csv("../data_preprocessing/original_data/1880_census_databasuttag.txt", sep="\t", dtype=str, encoding="latin1")
+    # download_images_as_jpg(df, "BILDNR" )  # Downloads to ./images/
     generate_jsonl_file()  # Reads ./images/, outputs ./annotations.jsonl
     generate_parquet_file()   # Reads annotations and saves ./output.parquet
     push_to_huggingface(repo_id, parquet_path, dataset_infos_path, readme_path, gitattributes_path)  # Uploads to Hugging Face Hub
