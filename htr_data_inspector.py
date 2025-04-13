@@ -20,6 +20,8 @@ import json
 import os
 import pandas as pd
 from datasets import load_dataset
+from io import BytesIO
+from PIL import Image
 
 
 def read_and_inspect_parquet(file_path):
@@ -60,20 +62,16 @@ def inspect_data_examples(data_dir):
 
 def display_dataset_info(dataset_name):
     # Load the dataset
-    dataset = load_dataset(dataset_name)
+    dataset = load_dataset(dataset_name, split="train", streaming=True)
 
-    # Print basic info
-    print(dataset)
-    print(dataset['train'].features)
-
-    # Access and display an example
-    example = dataset["train"][0]
-    # print(example)
+    # Display schema info (grab 1 example to infer features)
+    example = next(iter(dataset))
     print("Parsed data:", json.loads(example["ground_truth"]))
 
     # Display the image
-    img = example['image']
-    img.show()
+    img_bytes = example['image']['bytes']
+    image = Image.open(BytesIO(img_bytes))
+    image.show()
 
 
 # Read local parquet files generated
