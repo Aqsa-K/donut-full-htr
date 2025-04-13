@@ -84,30 +84,94 @@ def convert_to_jsonl(df, output_path):
 #     # Save to parquet
 #     df.to_parquet("./handwritten_archives_test.parquet", index=False)
 
-def generate_parquet_file():
-# Load your original .jsonl data
+# def generate_parquet_file():
+# # Load your original .jsonl data
+#     records = []
+#     k=0
+
+#     with open("data.jsonl", "r", encoding="utf-8") as f:
+#         for line in f:
+#             record = json.loads(line)
+#             image_path = record["image_path"]
+#             image_bytes = open(image_path, "rb").read()
+#             gt = record["ground_truth"] # typo retained if intentional        
+
+#             records.append({
+#                 "image": {"bytes": image_bytes},       # Store raw image
+#                 "ground_truth": json.dumps(gt)         
+#             })
+#             k+=1
+#             if k % 100 == 0:
+#                 print(f"Processed {k} records")
+
+#     df = pd.DataFrame(records)
+
+#     # Save to parquet
+#     df.to_parquet("./train.parquet", index=False)
+
+
+import json
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+import os
+
+def generate_parquet_file(batch_size=5000):
     records = []
-    k=0
+    k = 0
+    batch_id = 0
+
+    parquet_writer = None
 
     with open("data.jsonl", "r", encoding="utf-8") as f:
         for line in f:
             record = json.loads(line)
             image_path = record["image_path"]
-            image_bytes = open(image_path, "rb").read()
-            gt = record["ground_truth"] # typo retained if intentional        
+            
+            try:
+                with open(image_path, "rb") as img_f:
+                    image_bytes = img_f.read()
+            except FileNotFoundError:
+                print(f"Missing image: {image_path}")
+                continue
+            
+            gt = record["ground_truth"]
 
             records.append({
-                "image": {"bytes": image_bytes},       # Store raw image
-                "ground_truth": json.dumps(gt)         
+                "image": image_bytes,
+                "ground_truth": json.dumps(gt)
             })
-            k+=1
-            if k % 100 == 0:
+
+            k += 1
+
+            if k % batch_size == 0:
                 print(f"Processed {k} records")
+                df = pd.DataFrame(records)
 
-    df = pd.DataFrame(records)
+                # Convert to pyarrow Table
+                table = pa.Table.from_pandas(df)
 
-    # Save to parquet
-    df.to_parquet("./train.parquet", index=False)
+                # Write to Parquet incrementally
+                if parquet_writer is None:
+                    parquet_writer = pq.ParquetWriter("train.parquet", table.schema)
+                parquet_writer.write_table(table)
+
+                records = []  # clear memory
+                batch_id += 1
+
+        # Write any remaining records
+        if records:
+            df = pd.DataFrame(records)
+            table = pa.Table.from_pandas(df)
+            if parquet_writer is None:
+                parquet_writer = pq.ParquetWriter("train.parquet", table.schema)
+            parquet_writer.write_table(table)
+
+    if parquet_writer:
+        parquet_writer.close()
+
+    print(f"✅ Done. Total processed: {k} rows.")
+
 
 def generate_jsonl_file():
 
