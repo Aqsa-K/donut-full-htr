@@ -89,7 +89,3 @@ def display_dataset_info(dataset_name):
 # Test and verify uploaded dataset
 # display_dataset_info("AqsaK/1880_census_handwritten_archives")  
 display_dataset_info("AqsaK/testdataHW3")   
-
-import gc
-gc.collect()
-
