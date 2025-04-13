@@ -71,9 +71,9 @@ def display_dataset_info(dataset_name):
     print("parsing done")
 
     # # Display the image
-    # image = example['image']
+    image = example['image']
     # # image.show()
-    # image.save("example_output.jpg")
+    image.save("example_output.jpg")
 
 
 
