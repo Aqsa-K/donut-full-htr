@@ -70,7 +70,9 @@ def display_dataset_info(dataset_name):
 
     # Display the image
     image = example['image']
-    image.show()
+    # image.show()
+    image.save("example_output.jpg")
+
 
 
 # Read local parquet files generated
