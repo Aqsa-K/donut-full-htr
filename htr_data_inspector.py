@@ -69,8 +69,7 @@ def display_dataset_info(dataset_name):
     print("Parsed data:", json.loads(example["ground_truth"]))
 
     # Display the image
-    img_bytes = example['image']['bytes']
-    image = Image.open(BytesIO(img_bytes))
+    image = example['image']
     image.show()
 
 
