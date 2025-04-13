@@ -74,6 +74,7 @@ def display_dataset_info(dataset_name):
     image = example['image']
     # # image.show()
     image.save("example_output.jpg")
+    print("Image saved as example_output.jpg")
 
 
 
