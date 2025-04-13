@@ -182,6 +182,9 @@ notebooks/
 *.jsonl
 *.json
 
+#But keep dataset_infos.json file
+!data_pipeline/dataset_infos.json
+
 # text and csv files
 *.txt
 *.csv

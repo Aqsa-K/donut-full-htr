@@ -1,0 +1,35 @@
+{"testdataHW3": {
+    "description": "This dataset contains handwritten document images from the 1880 census, paired with structured ground truth labels extracted from the pages. It is designed for research on handwritten text recognition (HTR), document parsing, and historical record analysis.",
+    "citation": "",
+    "homepage": "",
+    "license": "cc-by-4.0",
+    "features": {
+      "image": {
+        "_type": "Image",
+        "decode": true, 
+        "id": null
+      },
+      "ground_truth": {
+        "dtype": "string",
+        "_type": "Value",
+        "id": null
+      }
+    },
+    "builder_name": "imagefolder",
+    "config_name": "default",
+    "version": {
+      "version_str": "1.0.0",
+      "description": "Initial release with raw image bytes and ground truth labels as JSON strings."
+    },
+    "splits": {
+      "train": {
+        "name": "train",
+        "num_bytes": 0,
+        "num_examples": 0,
+        "dataset_name": "testdataHW3"
+      }
+    },
+    "download_size": 0,
+    "dataset_size": 0
+  }
+}
