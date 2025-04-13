@@ -68,10 +68,10 @@ def display_dataset_info(dataset_name):
     example = next(iter(dataset))
     print("Parsed data:", json.loads(example["ground_truth"]))
 
-    # Display the image
-    image = example['image']
-    # image.show()
-    image.save("example_output.jpg")
+    # # Display the image
+    # image = example['image']
+    # # image.show()
+    # image.save("example_output.jpg")
 
 
 
