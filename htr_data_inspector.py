@@ -20,8 +20,8 @@ import json
 import os
 import pandas as pd
 from datasets import load_dataset
-from io import BytesIO
-from PIL import Image
+# # from io import BytesIO
+# from PIL import Image
 
 
 def read_and_inspect_parquet(file_path):
