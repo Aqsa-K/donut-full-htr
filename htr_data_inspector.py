@@ -77,9 +77,14 @@ def display_dataset_info(dataset_name):
 
 
 # Read local parquet files generated
-read_and_inspect_parquet("./train.parquet")
-read_and_inspect_parquet("./handwritten_archives_v3.parquet")
+# read_and_inspect_parquet("./train2.parquet")
+# read_and_inspect_parquet("./handwritten_archives_v3.parquet")
+# read_and_inspect_parquet("./output.parquet")
+
+
+# read_and_inspect_parquet("validation-00000-of-00001-cc3c5779fe22e8ca.parquet")
 
 
 # Test and verify uploaded dataset
-display_dataset_info("AqsaK/1880_census_handwritten_archives")   
+# display_dataset_info("AqsaK/1880_census_handwritten_archives")  
+display_dataset_info("AqsaK/testdataHW3")   
