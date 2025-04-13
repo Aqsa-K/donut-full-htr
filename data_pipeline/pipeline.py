@@ -10,8 +10,8 @@ def run_pipeline(repo_id, parquet_path, dataset_infos_path, readme_path, gitattr
     # download_images_as_jpg(df, "BILDNR" )  # Downloads to ./images/
     # generate_jsonl_file()  # Reads ./images/, outputs ./annotations.jsonl
     # print("JSONL file generated")
-    generate_parquet_file()   # Reads annotations and saves ./output.parquet
-    print("Parquet file generated")
+    # generate_parquet_file()   # Reads annotations and saves ./output.parquet
+    # print("Parquet file generated")
     push_to_huggingface(repo_id, parquet_path, dataset_infos_path, readme_path, gitattributes_path)  # Uploads to Hugging Face Hub
     print("Uploaded to Hugging Face Hub")
 

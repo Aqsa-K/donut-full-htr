@@ -15,6 +15,8 @@ def push_to_huggingface(repo_id, parquet_path, dataset_infos_path, readme_path, 
     # Load dataframe & convert to HuggingFace Dataset
     df = pd.read_parquet(parquet_path)
     hf_dataset = Dataset.from_pandas(df)
+    print("uploading files to hugging face process started")
+    print("dataframe loaded")
 
     # # Push to HF Hub
     # hf_dataset.push_to_hub(repo_id)
@@ -26,6 +28,8 @@ def push_to_huggingface(repo_id, parquet_path, dataset_infos_path, readme_path, 
     repo_type="dataset"
     )
 
+    print("parquet file uploaded")
+
     # Upload dataset_infos.json
     upload_file(
         path_or_fileobj=dataset_infos_path,
@@ -34,6 +38,8 @@ def push_to_huggingface(repo_id, parquet_path, dataset_infos_path, readme_path, 
         repo_type="dataset"
     )
 
+    print("dataset_infos.json file uploaded")
+
     upload_file(
         path_or_fileobj=readme_path,
         path_in_repo="README.md",
@@ -41,10 +47,14 @@ def push_to_huggingface(repo_id, parquet_path, dataset_infos_path, readme_path, 
         repo_type="dataset"
     )
 
+    print("readme file uploaded")
+
     upload_file(
         path_or_fileobj=gitattributes_path,
         path_in_repo=".gitattributes",
         repo_id=repo_id,
         repo_type="dataset"
     )
+
+    print(".gitattributes file uploaded")
 
