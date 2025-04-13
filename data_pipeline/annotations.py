@@ -87,6 +87,7 @@ def convert_to_jsonl(df, output_path):
 def generate_parquet_file():
 # Load your original .jsonl data
     records = []
+    k=0
 
     with open("data.jsonl", "r", encoding="utf-8") as f:
         for line in f:
@@ -99,6 +100,9 @@ def generate_parquet_file():
                 "image": {"bytes": image_bytes},       # Store raw image
                 "ground_truth": json.dumps(gt)         
             })
+            k+=1
+            if k % 100 == 0:
+                print(f"Processed {k} records")
 
     df = pd.DataFrame(records)
 
