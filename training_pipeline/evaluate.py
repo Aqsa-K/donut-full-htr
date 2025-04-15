@@ -22,7 +22,7 @@ output_list = []
 accs = []
 
 dataset = load_dataset("AqsaK/1880_census_handwritten_archives", split="train")
-
+k=0
 for i in tqdm(range(20)):
     try:
         sample = dataset[i]
@@ -67,6 +67,9 @@ for i in tqdm(range(20)):
         output_list.append(seq)
     except Exception as e:
         print(f"Skipping bad image: {e}")
+        k+=1
+        continue
+    k+=1
 
 scores = {"accuracies": accs, "mean_accuracy": np.mean(accs)}
 print(scores, f"length : {len(accs)}")
