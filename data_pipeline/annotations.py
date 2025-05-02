@@ -10,6 +10,18 @@ def remap_households_per_page(households):
     }
     return remapped_households
 
+def remap_flatten_households(households):
+    # Flatten all people from all households
+    all_people = []
+    for members in households.values():
+        all_people.extend(members)
+
+    # Create a new structure for individuals
+    # Replace structure
+    remapped_households = {"individuals": all_people}
+    return remapped_households
+
+
 def filter_dataframe_by_images(df, image_folder):
     # Get list of image filenames
     image_filenames = [f for f in os.listdir(image_folder) if os.path.isfile(os.path.join(image_folder, f))]
@@ -54,7 +66,7 @@ def convert_to_jsonl(df, output_path):
     with open(jsonl_path, "w", encoding="utf-8") as f:
         for page_id, households in pages.items():
             image_path = f"images/{page_id}.jpg"
-            households = remap_households_per_page(households)
+            households = remap_flatten_households(households)
             json.dump({"ground_truth" : {"gt_parse" : {"households": households}}, "image_path" : image_path}, f, ensure_ascii=False)
             f.write("\n")
 
