@@ -8,7 +8,7 @@ import yaml
 def run_pipeline(repo_id, parquet_path, dataset_infos_path, readme_path, gitattributes_path):
     df = pd.read_csv("../data_preprocessing/original_data/1880_census_databasuttag.txt", sep="\t", dtype=str, encoding="latin1")
     # df = df[:2000]
-    download_images_as_jpg(df, "BILDNR" )  # Downloads to ./images/
+    # download_images_as_jpg(df, "BILDNR" )  # Downloads to ./images/
     generate_jsonl_file()  # Reads ./images/, outputs ./annotations.jsonl
     print("JSONL file generated")
     generate_parquet_file()   # Reads annotations and saves ./output.parquet
