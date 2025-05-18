@@ -4,7 +4,7 @@ import pandas as pd
 # from hf_transfer import upload_file
 
 
-def push_to_huggingface(repo_id, parquet_path, dataset_infos_path, readme_path, gitattributes_path):
+def push_to_huggingface(repo_id, train_parquet_path, val_parquet_path, test_parquet_path, dataset_infos_path, readme_path, gitattributes_path):
     # Create repo if it doesn't exist
     api = HfApi()
     try:
@@ -22,8 +22,22 @@ def push_to_huggingface(repo_id, parquet_path, dataset_infos_path, readme_path, 
     # hf_dataset.push_to_hub(repo_id)
 
     upload_file(
-    path_or_fileobj=parquet_path,
+    path_or_fileobj=train_parquet_path,
     path_in_repo="data/train.parquet",  # or just "train.parquet"
+    repo_id=repo_id,
+    repo_type="dataset"
+    )
+
+    upload_file(
+    path_or_fileobj=val_parquet_path,
+    path_in_repo="data/validation.parquet",  # or just "train.parquet"
+    repo_id=repo_id,
+    repo_type="dataset"
+    )
+
+    upload_file(
+    path_or_fileobj=test_parquet_path,
+    path_in_repo="data/test.parquet",  # or just "train.parquet"
     repo_id=repo_id,
     repo_type="dataset"
     )

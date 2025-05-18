@@ -77,7 +77,7 @@ def convert_to_jsonl(df, output_path):
     return jsonl_path
 
 def create_jsonl_splits(df, output_dir, train_frac=0.8, val_frac=0.1, seed=42):
-    os.makedirs(output_dir, exist_ok=True)
+    # os.makedirs(output_dir, exist_ok=True)
 
     # Get unique pages (BILDNR)
     unique_pages = df["BILDNR"].unique()
@@ -86,6 +86,8 @@ def create_jsonl_splits(df, output_dir, train_frac=0.8, val_frac=0.1, seed=42):
 
     def subset_df(pages_subset):
         return df[df["BILDNR"].isin(pages_subset)]
+    
+    print("output directory: ", os.path.join(output_dir, "train.jsonl"))
 
     # Create and save splits
     convert_to_jsonl(subset_df(train_pages), os.path.join(output_dir, "train.jsonl"))
@@ -148,14 +150,14 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import os
 
-def generate_parquet_file(batch_size=5000):
+def generate_parquet_file(jsonl_filename = "data.jsonl", filename = "train.parquet", batch_size=5000):
     records = []
     k = 0
     batch_id = 0
 
     parquet_writer = None
 
-    with open("data.jsonl", "r", encoding="utf-8") as f:
+    with open(jsonl_filename, "r", encoding="utf-8") as f:
         for line in f:
             record = json.loads(line)
             image_path = record["image_path"]
@@ -185,7 +187,7 @@ def generate_parquet_file(batch_size=5000):
 
                 # Write to Parquet incrementally
                 if parquet_writer is None:
-                    parquet_writer = pq.ParquetWriter("train.parquet", table.schema)
+                    parquet_writer = pq.ParquetWriter(filename, table.schema)
                 parquet_writer.write_table(table)
 
                 records = []  # clear memory
@@ -196,13 +198,18 @@ def generate_parquet_file(batch_size=5000):
             df = pd.DataFrame(records)
             table = pa.Table.from_pandas(df)
             if parquet_writer is None:
-                parquet_writer = pq.ParquetWriter("train.parquet", table.schema)
+                parquet_writer = pq.ParquetWriter(filename, table.schema)
             parquet_writer.write_table(table)
 
     if parquet_writer:
         parquet_writer.close()
 
     print(f"✅ Done. Total processed: {k} rows.")
+
+def generate_parquet_file_splits():
+    generate_parquet_file("train.jsonl", "train.parquet")
+    generate_parquet_file("val.jsonl", "validation.parquet")
+    generate_parquet_file("test.jsonl", "test.parquet")
 
 
 def generate_jsonl_file():
@@ -224,8 +231,8 @@ def generate_jsonl_file():
     print("Dataframe filtered successfully.")
 
     # Convert the filtered dataframe and save as JSONL
-    filtered_output_jsonl_path = "./data.jsonl"
-    convert_to_jsonl(filtered_df, filtered_output_jsonl_path)
+    output_dir = "./"
+    create_jsonl_splits(filtered_df, output_dir)
 
     print("Dataframe converted to JSONL successfully.")
 
