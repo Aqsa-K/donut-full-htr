@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import os
+from sklearn.model_selection import train_test_split
 
 
 def remap_households_per_page(households):
@@ -45,6 +46,9 @@ def convert_to_jsonl(df, output_path):
     with households (HNR) containing individuals and their attributes.
     """
     pages = {}
+
+    #rename columns
+    df = df.rename(columns={"FORNAMN": "FN", "ENAMN": "EN"})
     
     for _, row in df.iterrows():
         page_id = row["BILDNR"]
@@ -71,6 +75,22 @@ def convert_to_jsonl(df, output_path):
             f.write("\n")
 
     return jsonl_path
+
+def create_jsonl_splits(df, output_dir, train_frac=0.8, val_frac=0.1, seed=42):
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Get unique pages (BILDNR)
+    unique_pages = df["BILDNR"].unique()
+    train_pages, temp_pages = train_test_split(unique_pages, train_size=train_frac, random_state=seed)
+    val_pages, test_pages = train_test_split(temp_pages, test_size=0.5, random_state=seed)
+
+    def subset_df(pages_subset):
+        return df[df["BILDNR"].isin(pages_subset)]
+
+    # Create and save splits
+    convert_to_jsonl(subset_df(train_pages), os.path.join(output_dir, "train.jsonl"))
+    convert_to_jsonl(subset_df(val_pages), os.path.join(output_dir, "val.jsonl"))
+    convert_to_jsonl(subset_df(test_pages), os.path.join(output_dir, "test.jsonl"))
 
 
 
@@ -187,9 +207,13 @@ def generate_parquet_file(batch_size=5000):
 
 def generate_jsonl_file():
 
+    # cols = ['ID', 'RAD', 'FORNAMN', 'ENAMN', 'HNR','FNR','BILDNR', 'YRKE', 'KON', 'CIV', 'FODAR', 'FODORT', 'FODFORS', 'KYRKORT', 'LYTE', 'NATIONAL']
+    cols = ['ID', 'RAD', 'FORNAMN', 'ENAMN', 'HNR', 'BILDNR']
+
+
     # Read the text file
     df = pd.read_csv("../data_preprocessing/original_data/1880_census_databasuttag.txt", sep="\t", dtype=str, encoding="latin1")
-    df = df[['ID', 'RAD', 'FORNAMN', 'ENAMN', 'HNR','FNR','BILDNR', 'YRKE', 'KON', 'CIV', 'FODAR', 'FODORT', 'FODFORS', 'KYRKORT', 'LYTE', 'NATIONAL']]
+    df = df[cols]
 
     print("Dataframe read successfully.")
 

@@ -23,6 +23,7 @@ import os
 import requests
 import pandas as pd
 import json
+import urllib.request
 
 
 
@@ -39,15 +40,19 @@ def download_images_as_jpg(df, image_column, save_folder="images"):
     # Ensure the save folder exists
     os.makedirs(save_folder, exist_ok=True)
 
-    import urllib.request
+    df.dropna(subset=["BILDNR"], inplace=True)
 
-    for index, row in df[:100].iterrows():
-        image_id = row[image_column]  # Get the BILDNR value
+    unique_bildnr = df['BILDNR'].unique()
+    print(unique_bildnr)
+    print(len(unique_bildnr))
+
+    k= 0
+
+    for image_id in unique_bildnr:
+        # image_id = row[image_column]  # Get the BILDNR value
 
         # Construct the IIIF Manifest URL
         image_url = f"https://lbiiif.riksarkivet.se/folk!{image_id}/full/max/0/default.jpg"
-
-        print(image_url)
 
         # Define the file path to save the image
         image_path = os.path.join(save_folder, f"{image_id}.jpg")
@@ -57,13 +62,15 @@ def download_images_as_jpg(df, image_column, save_folder="images"):
                 with open(image_path, "wb") as file:
                     file.write(img_response.read())  # Save the image
 
-            print(f"Downloaded: {image_id}.jpg")
         except urllib.error.URLError as e:
             print(f"Failed to download {image_id}: {e}")
         except (KeyError, IndexError):
             print(f"Invalid manifest format for {image_id}")
         except Exception as e:
             print(f"An error occurred for {image_id}: {e}")
+        k+=1
+        if k % 100 == 0:
+            print(f"Downloaded {k} images")
         
 
 def download_manifest(df, image_column, save_folder="manifest"):
