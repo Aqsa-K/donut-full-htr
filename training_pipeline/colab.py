@@ -29,6 +29,12 @@ We'll use PyTorch Lightning for training here, but note that this is optional, y
 Next, let's load the dataset from the [hub](https://huggingface.co/datasets/naver-clova-ix/cord-v2). The dataset consists of (image, JSON) pairs. Note that it doesn't have to be JSON, it could also be JSON lines, plain text, etc.
 """
 
+import os
+from huggingface_hub import login
+
+hf_token = os.getenv("HF_TOKEN")  # e.g., set via Colab secret or manually
+login(token=hf_token)
+
 dataset_name_hf = "AqsaK/testdataHW2"
 
 from datasets import load_dataset
