@@ -714,7 +714,7 @@ class PushToHubCallback(Callback):
 # early_stop_callback = EarlyStopping(monitor="val_edit_distance", patience=3, verbose=False, mode="min")
 
 trainer = pl.Trainer(
-        accelerator="cpu",
+        accelerator="gpu",
         devices=1,
         max_epochs=config.get("max_epochs"),
         val_check_interval=config.get("val_check_interval"),
