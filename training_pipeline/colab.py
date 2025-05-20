@@ -35,6 +35,13 @@ from huggingface_hub import login
 hf_token = os.getenv("HF_TOKEN")  # e.g., set via Colab secret or manually
 login(token=hf_token)
 
+
+from huggingface_hub import whoami
+
+user_info = whoami()
+print("Logged in as:", user_info["name"])
+
+
 dataset_name_hf = "AqsaK/testdataHW2"
 
 from datasets import load_dataset
