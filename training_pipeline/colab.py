@@ -46,7 +46,7 @@ example = dataset['train'][0]
 image = example['image']
 # let's make the image a bit smaller when visualizing
 width, height = image.size
-display(image)
+# display(image)
 
 print(width, height)
 
