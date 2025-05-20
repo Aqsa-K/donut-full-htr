@@ -10,9 +10,9 @@ def run_pipeline(repo_id, train_parquet_path, val_parquet_path, test_parquet_pat
     # df = pd.read_csv("../data_preprocessing/output_data/sample_data_7512.csv")
 
     # download_images_as_jpg(df, "BILDNR" )  # Downloads to ./images/
-    # generate_jsonl_file()  # Reads ./images/, outputs ./annotations.jsonl
+    generate_jsonl_file()  # Reads ./images/, outputs ./annotations.jsonl
     # print("JSONL file generated")
-    # generate_parquet_file_splits()   # Reads annotations and saves ./output.parquet
+    generate_parquet_file_splits()   # Reads annotations and saves ./output.parquet
     # print("Parquet file generated")
     push_to_huggingface(repo_id, train_parquet_path, val_parquet_path, test_parquet_path, dataset_infos_path, readme_path, gitattributes_path)  # Uploads to Hugging Face Hub
     print("Uploaded to Hugging Face Hub")
