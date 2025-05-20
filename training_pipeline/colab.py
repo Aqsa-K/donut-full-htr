@@ -42,6 +42,17 @@ user_info = whoami()
 print("Logged in as:", user_info["name"])
 
 
+import os
+import wandb
+
+wandb_api_key = os.getenv("WANDB_API_KEY")
+wandb.login(key=wandb_api_key)
+
+user = wandb.api.viewer()
+print(f"Logged in as: {user.get('entity')}")
+
+
+
 dataset_name_hf = "AqsaK/testdataHW2"
 
 from datasets import load_dataset
