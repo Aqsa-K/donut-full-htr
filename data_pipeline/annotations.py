@@ -94,54 +94,6 @@ def create_jsonl_splits(df, output_dir, train_frac=0.8, val_frac=0.1, seed=42):
 
 
 
-# def generate_parquet_file():
-# # Load your original .jsonl data
-#     records = []
-
-#     with open("data.jsonl", "r", encoding="utf-8") as f:
-#         for line in f:
-#             record = json.loads(line)
-#             image_path = record["image_path"]
-#             print("image_path: ", image_path)
-#             image_bytes = open(image_path, "rb").read()
-#             gt = record["ground_truth"] # typo retained if intentional
-
-#             records.append({
-#                 "image": {"bytes": image_bytes},       # Store raw image
-#                 "ground_truth": gt                     # Flatten: no more gt_parse key
-#             })
-
-#     df = pd.DataFrame(records)
-
-#     # Save to parquet
-#     df.to_parquet("./handwritten_archives_test.parquet", index=False)
-
-# def generate_parquet_file():
-# # Load your original .jsonl data
-#     records = []
-#     k=0
-
-#     with open("data.jsonl", "r", encoding="utf-8") as f:
-#         for line in f:
-#             record = json.loads(line)
-#             image_path = record["image_path"]
-#             image_bytes = open(image_path, "rb").read()
-#             gt = record["ground_truth"] # typo retained if intentional        
-
-#             records.append({
-#                 "image": {"bytes": image_bytes},       # Store raw image
-#                 "ground_truth": json.dumps(gt)         
-#             })
-#             k+=1
-#             if k % 100 == 0:
-#                 print(f"Processed {k} records")
-
-#     df = pd.DataFrame(records)
-
-#     # Save to parquet
-#     df.to_parquet("./train.parquet", index=False)
-
-
 import json
 import pandas as pd
 import pyarrow as pa
