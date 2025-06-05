@@ -27,18 +27,18 @@ print("wandb:", wandb.__version__)
 print("tokenizers:", tokenizers.__version__)
 
 with open("config.yaml", "r") as f:
-        config = yaml.safe_load(f)
+        config_yaml = yaml.safe_load(f)
 
 # Load the dataset from Hugging Face Hub
-dataset_hf = config["DATASET_HF"]
+dataset_hf = config_yaml["DATASET_HF"]
 dataset = load_dataset(dataset_hf)
 print("Dataset loaded:", dataset)
 
-hf_model_name = config["HF_MODEL_NAME"]
+hf_model_name = config_yaml["HF_MODEL_NAME"]
 print("Hugging Face model name:", hf_model_name)
 
-project_name = config["PROJECT_NAME"]
-exp_name = config["EXPERIMENT_NAME"]
+project_name = config_yaml["PROJECT_NAME"]
+exp_name = config_yaml["EXPERIMENT_NAME"]
 
 # Access the first example in the training set
 example = dataset['train'][0]
@@ -369,11 +369,11 @@ class DonutModelPLModule(pl.LightningModule):
     
 
 
-config = {"max_epochs": config["MAX_EPOCHS"], # 30 epochs
-          "val_check_interval": config["VAL_CHECK_INTERVAL"], # how many times we want to validate during an epoch
+config = {"max_epochs": config_yaml["MAX_EPOCHS"], # 30 epochs
+          "val_check_interval": config_yaml["VAL_CHECK_INTERVAL"], # how many times we want to validate during an epoch
           "check_val_every_n_epoch":1,
           "gradient_clip_val":1.0,
-          "num_training_samples_per_epoch": config["NUM_TRAINING_SAMPLES_PER_EPOCH"], # 8000 samples per epoch
+          "num_training_samples_per_epoch": config_yaml["NUM_TRAINING_SAMPLES_PER_EPOCH"], # 8000 samples per epoch
           "lr":3e-5,
           "train_batch_sizes": [32],
           "val_batch_sizes": [16],
