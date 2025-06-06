@@ -398,6 +398,19 @@ from pytorch_lightning.callbacks import Callback, EarlyStopping, ModelCheckpoint
 
 wandb_logger = WandbLogger(project=project_name, name=exp_name)
 
+class ToggleVerbose(Callback):
+    """
+    Keep pl_module.config["verbose"] == True for the first *n* validation epochs,
+    then switch it to False so printing stops.
+    """
+    def __init__(self, off_after_epoch: int = 0):  # 0 → only epoch-0 is verbose
+        super().__init__()
+        self.off_after_epoch = off_after_epoch
+
+    def on_validation_epoch_start(self, trainer, pl_module):
+        # True while current_epoch <= off_after_epoch, then False
+        pl_module.config["verbose"] = trainer.current_epoch <= self.off_after_epoch
+
 
 
 class PushToHubCallback(Callback):
@@ -441,8 +454,8 @@ trainer = pl.Trainer(
         precision=16, # we'll use mixed precision
         num_sanity_val_steps=0,
         logger=wandb_logger,
-        limit_val_batches  = 0.2, # 20% of the validation set
-        callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback],
+        limit_val_batches  = 0.02, # 20% of the validation set
+        callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback, ToggleVerbose(off_after_epoch=0)],
 )
 
 trainer.fit(model_module)
