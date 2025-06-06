@@ -306,6 +306,9 @@ class DonutModelPLModule(pl.LightningModule):
         self.config = config
         self.processor = processor
         self.model = model
+        self._show_examples = False      # set by a callback each epoch
+        self._examples_left = 0          # counter for how many we may still print
+
 
     def training_step(self, batch, batch_idx):
         pixel_values, labels, _ = batch
@@ -350,6 +353,14 @@ class DonutModelPLModule(pl.LightningModule):
                 print(f"Prediction: {pred}")
                 print(f"    Answer: {answer}")
                 print(f" Normed ED: {scores[0]}")
+
+            # ───── OPTIONAL PRINT (at most N per designated epoch) ─────
+            if self._show_examples and self._examples_left > 0:
+                print("\nPRED ▶", predictions[0])     # print only the first item of the batch
+                print("TRUE ▶", answers[0])
+                print("Normed ED:", scores[0])
+                print("―" * 60)
+                self._examples_left -= 1
 
         self.log("val_edit_distance", np.mean(scores))
 
@@ -397,6 +408,25 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.callbacks import Callback, EarlyStopping, ModelCheckpoint
 
 wandb_logger = WandbLogger(project=project_name, name=exp_name)
+
+# Callback for shoewing a few samples of predictions and ground truths
+class ShowFewSamples(Callback):
+    """
+    Print at most `num_samples` examples every `every_n_epochs` epochs.
+    Works even if validation_step only returns scalar metrics.
+    """
+
+    def __init__(self, every_n_epochs: int = 1, num_samples: int = 1):
+        super().__init__()
+        self.every_n_epochs = every_n_epochs
+        self.num_samples = num_samples
+
+    def on_validation_epoch_start(self, trainer, pl_module):
+        # Should we show samples this epoch?
+        pl_module._show_examples = trainer.current_epoch % self.every_n_epochs == 0
+        pl_module._examples_left = self.num_samples if pl_module._show_examples else 0
+
+
 
 class ToggleVerbose(Callback):
     """
@@ -455,7 +485,7 @@ trainer = pl.Trainer(
         num_sanity_val_steps=0,
         logger=wandb_logger,
         limit_val_batches  = 0.02, # 20% of the validation set
-        callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback, ToggleVerbose(off_after_epoch=0)],
+        callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback, ToggleVerbose(off_after_epoch=0), ShowFewSamples(every_n_epochs=1, num_samples=2)],
 )
 
 trainer.fit(model_module)
