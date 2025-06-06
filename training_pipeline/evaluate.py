@@ -63,7 +63,7 @@ def evaluate_model(model, processor, dataset_hf):
 
         # turn into JSON
         seq = processor.batch_decode(outputs.sequences)[0]
-        print("seq: ", seq)
+        # print("seq: ", seq)
         seq = seq.replace(processor.tokenizer.eos_token, "").replace(processor.tokenizer.pad_token, "")
         seq = re.sub(r"<.*?>", "", seq, count=1).strip()  # remove first task start token
         seq = processor.token2json(seq)
