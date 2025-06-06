@@ -349,18 +349,19 @@ class DonutModelPLModule(pl.LightningModule):
             answer = answer.replace(self.processor.tokenizer.eos_token, "")
             scores.append(edit_distance(pred, answer) / max(len(pred), len(answer)))
 
-            if self.config.get("verbose", False) and len(scores) == 1:
+            if self.config.get("verbose", False) and len(scores) == 1 and self._show_examples and self._examples_left > 0:
                 print(f"Prediction: {pred}")
                 print(f"    Answer: {answer}")
                 print(f" Normed ED: {scores[0]}")
-
-            # ───── OPTIONAL PRINT (at most N per designated epoch) ─────
-            if self._show_examples and self._examples_left > 0:
-                print("\nPRED ▶", predictions[0])     # print only the first item of the batch
-                print("TRUE ▶", answers[0])
-                print("Normed ED:", scores[0])
-                print("―" * 60)
                 self._examples_left -= 1
+
+            # # ───── OPTIONAL PRINT (at most N per designated epoch) ─────
+            # if self._show_examples and self._examples_left > 0:
+            #     print("\nPRED ▶", predictions[0])     # print only the first item of the batch
+            #     print("TRUE ▶", answers[0])
+            #     print("Normed ED:", scores[0])
+            #     print("―" * 60)
+            #     self._examples_left -= 1
 
         self.log("val_edit_distance", np.mean(scores))
 
@@ -485,7 +486,7 @@ trainer = pl.Trainer(
         num_sanity_val_steps=0,
         logger=wandb_logger,
         limit_val_batches  = 0.02, # 20% of the validation set
-        callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback, ToggleVerbose(off_after_epoch=0), ShowFewSamples(every_n_epochs=1, num_samples=2)],
+        callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback, ShowFewSamples(every_n_epochs=1, num_samples=2)],
 )
 
 trainer.fit(model_module)
