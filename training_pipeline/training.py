@@ -441,6 +441,7 @@ trainer = pl.Trainer(
         precision=16, # we'll use mixed precision
         num_sanity_val_steps=0,
         logger=wandb_logger,
+        limit_val_batches  = 0.2, # 20% of the validation set
         callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback],
 )
 
