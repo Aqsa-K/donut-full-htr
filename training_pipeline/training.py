@@ -371,17 +371,17 @@ class DonutModelPLModule(pl.LightningModule):
 
 config = {"max_epochs": config_yaml["MAX_EPOCHS"], # 30 epochs
           "val_check_interval": config_yaml["VAL_CHECK_INTERVAL"], # how many times we want to validate during an epoch
-          "check_val_every_n_epoch":1,
-          "gradient_clip_val":1.0,
+          "check_val_every_n_epoch":config_yaml["CHECK_VAL_EVERY_N_EPOCH"],
+          "gradient_clip_val":config_yaml["GRADIENT_CLIP_VAL"],
           "num_training_samples_per_epoch": config_yaml["NUM_TRAINING_SAMPLES_PER_EPOCH"], # 8000 samples per epoch
-          "lr":3e-5,
-          "train_batch_sizes": [32],
-          "val_batch_sizes": [16],
+          "lr":config_yaml["LR"], # 3e-5
+          "train_batch_sizes": config_yaml["TRAIN_BATCH_SIZES"],
+          "val_batch_sizes": config_yaml["VAL_BATCH_SIZES"],
           # "seed":2022,
-          "num_nodes": 1,
-          "warmup_steps": 300, # 800/8*30/10, 10%
+          "num_nodes": config_yaml["NUM_NODES"],
+          "warmup_steps": config_yaml["WARMUP_STEPS"], # 800/8*30/10, 10%
           "result_path": "./result",
-          "verbose": True,
+          "verbose": config_yaml["VERBOSE"], # print predictions and answers during validation
           }
 
 model_module = DonutModelPLModule(config, processor, model)
