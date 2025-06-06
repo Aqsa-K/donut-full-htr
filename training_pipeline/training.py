@@ -265,7 +265,7 @@ print("Decoder start token ID:", processor.decode([model.config.decoder_start_to
 # feel free to increase the batch size if you have a lot of memory
 # I'm fine-tuning on Colab and given the large image size, batch size > 1 is not feasible
 train_dataloader = DataLoader(train_dataset, batch_size=1, shuffle=True, num_workers=4)
-val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=4)
+val_dataloader = DataLoader(val_dataset, batch_size=1, shuffle=True, num_workers=4)
 
 batch = next(iter(train_dataloader))
 pixel_values, labels, target_sequences = batch
