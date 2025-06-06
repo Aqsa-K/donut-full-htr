@@ -80,7 +80,7 @@ def evaluate_model(model, processor, dataset_hf):
 
         # -------- FOR F1 ----------
         preds_for_f1.append(seq)
-        gts_for_f1.append(gt)
+        gts_for_f1.append(ground_truth)
 
         output_list.append(seq)
 
