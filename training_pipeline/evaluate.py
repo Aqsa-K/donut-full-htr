@@ -30,6 +30,8 @@ model.to(device)
 def evaluate_model(model, processor, dataset_hf):
     output_list = []
     accs = []
+    preds_for_f1 = []  
+    gts_for_f1 = []    
 
     val_dataset = load_dataset(dataset_hf, split="validation")
     # val_dataset = dataset["validation"]
@@ -74,10 +76,23 @@ def evaluate_model(model, processor, dataset_hf):
         accs.append(score)
         output_list.append(seq)
         # print("seq: ", seq)
-        break
+        # break
+
+        # -------- FOR F1 ----------
+        preds_for_f1.append(seq)
+        gts_for_f1.append(gt)
+
+        output_list.append(seq)
+
+        if idx > 10:
+             break
+
+    # ---- aggregate scores ----
+    evaluator = JSONParseEvaluator()                      # fresh instance
+    field_f1 = evaluator.cal_f1(preds_for_f1, gts_for_f1) # <─ NEW line
 
 
-    scores = {"accuracies": accs, "mean_accuracy": np.mean(accs)}
+    scores = {"accuracies": accs, "mean_accuracy": np.mean(accs), "field_f1": float(field_f1)}
     print(scores, f"length : {len(accs)}")
 
     return output_list, accs, scores
