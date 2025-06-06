@@ -374,7 +374,7 @@ config = {"max_epochs": config_yaml["MAX_EPOCHS"], # 30 epochs
           "check_val_every_n_epoch":config_yaml["CHECK_VAL_EVERY_N_EPOCH"],
           "gradient_clip_val":config_yaml["GRADIENT_CLIP_VAL"],
           "num_training_samples_per_epoch": config_yaml["NUM_TRAINING_SAMPLES_PER_EPOCH"], # 8000 samples per epoch
-          "lr":config_yaml["LR"], # 3e-5
+          "lr": 3e-5, # learning rate
           "train_batch_sizes": config_yaml["TRAIN_BATCH_SIZES"],
           "val_batch_sizes": config_yaml["VAL_BATCH_SIZES"],
           # "seed":2022,
