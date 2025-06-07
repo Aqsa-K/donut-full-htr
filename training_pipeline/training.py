@@ -40,6 +40,8 @@ print("Hugging Face model name:", hf_model_name)
 project_name = config_yaml["PROJECT_NAME"]
 exp_name = config_yaml["EXPERIMENT_NAME"]
 
+PROMPT_TOKEN = config_yaml["PROMPT_TOKEN"] 
+
 # Access the first example in the training set
 example = dataset['train'][0]
 image = example['image']
@@ -223,12 +225,12 @@ processor.image_processor.size = image_size[::-1] # should be (width, height)
 processor.image_processor.do_align_long_axis = False
 
 train_dataset = DonutDataset(dataset_hf, max_length=max_length,
-                             split="train", task_start_token="<s_cord-v2>", prompt_end_token="<s_cord-v2>",
+                             split="train", task_start_token=PROMPT_TOKEN, prompt_end_token=PROMPT_TOKEN,
                              sort_json_key=False, # cord dataset is preprocessed, so no need for this
                              )
 
 val_dataset = DonutDataset(dataset_hf, max_length=max_length,
-                             split="validation", task_start_token="<s_cord-v2>", prompt_end_token="<s_cord-v2>",
+                             split="validation", task_start_token=PROMPT_TOKEN, prompt_end_token=PROMPT_TOKEN,
                              sort_json_key=False, # cord dataset is preprocessed, so no need for this
                              )
 
@@ -256,7 +258,7 @@ for id in labels.tolist()[:30]:
 print(target_sequence)
 
 model.config.pad_token_id = processor.tokenizer.pad_token_id
-model.config.decoder_start_token_id = processor.tokenizer.convert_tokens_to_ids(['<s_cord-v2>'])[0]
+model.config.decoder_start_token_id = processor.tokenizer.convert_tokens_to_ids([PROMPT_TOKEN])[0]
 
 # sanity check
 print("Pad token ID:", processor.decode([model.config.pad_token_id]))
