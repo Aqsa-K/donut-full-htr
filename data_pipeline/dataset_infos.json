@@ -24,20 +24,20 @@
     "splits": {
       "train": {
         "name": "train",
-        "num_bytes": 0,
-        "num_examples": 0,
+        "num_bytes": 22523061804,
+        "num_examples": 89637,
         "dataset_name": "HW-1880-whole-dataset"
       },
       "validation": {
         "name": "validation",
-        "num_bytes": 0,
-        "num_examples": 0,
+        "num_bytes": 2803397264,
+        "num_examples": 11205,
         "dataset_name": "HW-1880-whole-dataset"
       },
       "test": {
         "name": "test",
-        "num_bytes": 0,
-        "num_examples": 0,
+        "num_bytes": 2813864216,
+        "num_examples": 11205,
         "dataset_name": "HW-1880-whole-dataset"
       }
     },
