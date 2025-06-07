@@ -84,8 +84,8 @@ def evaluate_model(model, processor, dataset_hf):
 
         output_list.append(seq)
 
-        if idx > 10:
-             break
+        # if idx > 10:
+        #      break
 
     # ---- aggregate scores ----
     evaluator = JSONParseEvaluator()                      # fresh instance
