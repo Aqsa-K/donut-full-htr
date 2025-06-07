@@ -55,7 +55,7 @@ def convert_to_jsonl(df, output_path):
         household_id = row["HNR"]
         
         # Remove unnecessary columns for people attributes
-        person_data = row.drop(["BILDNR", "HNR", "ID", "RAD"]).dropna().to_dict()
+        person_data = row.drop(["BILDNR", "HNR", "FNR", "ID", "RAD"]).dropna().to_dict()
 
         if page_id not in pages:
             pages[page_id] = {}
@@ -94,54 +94,6 @@ def create_jsonl_splits(df, output_dir, train_frac=0.8, val_frac=0.1, seed=42):
     convert_to_jsonl(subset_df(val_pages), os.path.join(output_dir, "val.jsonl"))
     convert_to_jsonl(subset_df(test_pages), os.path.join(output_dir, "test.jsonl"))
 
-
-
-# def generate_parquet_file():
-# # Load your original .jsonl data
-#     records = []
-
-#     with open("data.jsonl", "r", encoding="utf-8") as f:
-#         for line in f:
-#             record = json.loads(line)
-#             image_path = record["image_path"]
-#             print("image_path: ", image_path)
-#             image_bytes = open(image_path, "rb").read()
-#             gt = record["ground_truth"] # typo retained if intentional
-
-#             records.append({
-#                 "image": {"bytes": image_bytes},       # Store raw image
-#                 "ground_truth": gt                     # Flatten: no more gt_parse key
-#             })
-
-#     df = pd.DataFrame(records)
-
-#     # Save to parquet
-#     df.to_parquet("./handwritten_archives_test.parquet", index=False)
-
-# def generate_parquet_file():
-# # Load your original .jsonl data
-#     records = []
-#     k=0
-
-#     with open("data.jsonl", "r", encoding="utf-8") as f:
-#         for line in f:
-#             record = json.loads(line)
-#             image_path = record["image_path"]
-#             image_bytes = open(image_path, "rb").read()
-#             gt = record["ground_truth"] # typo retained if intentional        
-
-#             records.append({
-#                 "image": {"bytes": image_bytes},       # Store raw image
-#                 "ground_truth": json.dumps(gt)         
-#             })
-#             k+=1
-#             if k % 100 == 0:
-#                 print(f"Processed {k} records")
-
-#     df = pd.DataFrame(records)
-
-#     # Save to parquet
-#     df.to_parquet("./train.parquet", index=False)
 
 
 import json
@@ -214,9 +166,10 @@ def generate_parquet_file_splits():
 
 def generate_jsonl_file():
 
-    # cols = ['ID', 'RAD', 'FORNAMN', 'ENAMN', 'HNR','FNR','BILDNR', 'YRKE', 'KON', 'CIV', 'FODAR', 'FODORT', 'FODFORS', 'KYRKORT', 'LYTE', 'NATIONAL']
-    cols = ['ID', 'RAD', 'FORNAMN', 'ENAMN', 'HNR', 'BILDNR']
+    # cols to ignore : LYTE (majority nans), NATIONAL (majority nans), KYRKORT (majority nans), FODORT (majority nans)
 
+    cols = ['ID', 'RAD', 'FORNAMN', 'ENAMN', 'HNR','FNR','BILDNR', 'YRKE', 'KON', 'CIV', 'FODAR', 'FODFORS']
+    # cols = ['ID', 'RAD', 'FORNAMN', 'ENAMN', 'HNR', 'BILDNR']
 
     # Read the text file
     df = pd.read_csv("../data_preprocessing/original_data/1880_census_databasuttag.txt", sep="\t", dtype=str, encoding="latin1")
