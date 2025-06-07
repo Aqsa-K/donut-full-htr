@@ -1,5 +1,5 @@
 DATASET_HF: "AqsaK/testdataHW5"
-HF_MODEL_NAME: "AqsaK/AqsaK/donut_1880_exp_subset"
+HF_MODEL_NAME: "AqsaK/donut_1880_exp_subset"
 PROJECT_NAME: "Donut-1880-whole"
 EXPERIMENT_NAME: "exp_run-2"
 
