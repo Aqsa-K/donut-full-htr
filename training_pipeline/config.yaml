@@ -16,3 +16,4 @@ NUM_NODES: 1
 WARMUP_STEPS: 300  # 80000/128*5/10, 10%
 RESULT_PATH: "./result"
 VERBOSE: True
+PROMPT_TOKEN: "<s_census-v1>"
