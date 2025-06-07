@@ -1,7 +1,7 @@
-DATASET_HF: "AqsaK/testdataHW5"
-HF_MODEL_NAME: "AqsaK/donut_1880_exp_subset"
+DATASET_HF: "AqsaK/HW-1880-whole-dataset"
+HF_MODEL_NAME: "AqsaK/HW-1880-finetuned-all-cols" # whole dataset with FN EN and all other keys 
 PROJECT_NAME: "Donut-1880-whole"
-EXPERIMENT_NAME: "exp_run-2"
+EXPERIMENT_NAME: "exp_run-3"
 
 MAX_EPOCHS: 25
 VAL_CHECK_INTERVAL: 0.2 # how many times we want to validate during an epoch
