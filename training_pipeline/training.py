@@ -488,7 +488,7 @@ trainer = pl.Trainer(
         num_sanity_val_steps=0,
         logger=wandb_logger,
         limit_val_batches  = 0.02, # 20% of the validation set
-        callbacks=[PushToHubCallback(push_on_train_end=True), early_stop_callback, checkpoint_callback, ShowFewSamples(every_n_epochs=1, num_samples=2)],
+        callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback, ShowFewSamples(every_n_epochs=1, num_samples=2)],
 )
 
 trainer.fit(model_module)
