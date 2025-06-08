@@ -6,7 +6,7 @@ from tqdm.auto import tqdm
 import numpy as np
 import yaml
 from donut import JSONParseEvaluator
-from datasets import load_dataset
+from datasets import load_dataset, load_dataset_builder
 from transformers import DonutProcessor, VisionEncoderDecoderModel
 
 
@@ -36,10 +36,14 @@ def evaluate_model(model, processor, dataset_hf):
     preds_for_f1 = []  
     gts_for_f1 = []    
 
+    # 1. Get the number of examples in that split *without* downloading/processing the data
+    builder = load_dataset_builder(dataset_hf)
+    num_samples = builder.info.splits[evaluation_split].num_examples
+
     val_dataset = load_dataset(dataset_hf, split=evaluation_split, streaming=True)
     # val_dataset = dataset["validation"]
 
-    for idx, sample in tqdm(enumerate(val_dataset), total=len(val_dataset)):
+    for idx, sample in tqdm(enumerate(val_dataset), num_samples):
         # prepare encoder inputs
         pixel_values = processor(sample["image"].convert("RGB"), return_tensors="pt").pixel_values
         pixel_values = pixel_values.to(device)
