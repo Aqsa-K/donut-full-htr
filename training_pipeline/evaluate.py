@@ -10,12 +10,15 @@ from datasets import load_dataset
 from transformers import DonutProcessor, VisionEncoderDecoderModel
 
 
-with open("config.yaml", "r") as f:
+with open("config_eval.yaml", "r") as f:
         config_yaml = yaml.safe_load(f)
 
 # Load the configuration
 dataset_hf = config_yaml["DATASET_HF"]
 model_hf = config_yaml["HF_MODEL_NAME"]
+PROMPT_TOKEN = config_yaml["PROMPT_TOKEN"]
+evaluation_split = config_yaml["EVALUATION_SPLIT"]
+evaluation_result_path = config_yaml["EVALUATION_RESULT_PATH"]
 
 
 # Load the dataset and model
@@ -33,7 +36,7 @@ def evaluate_model(model, processor, dataset_hf):
     preds_for_f1 = []  
     gts_for_f1 = []    
 
-    val_dataset = load_dataset(dataset_hf, split="validation")
+    val_dataset = load_dataset(dataset_hf, split=evaluation_split)
     # val_dataset = dataset["validation"]
 
     for idx, sample in tqdm(enumerate(val_dataset), total=len(val_dataset)):
@@ -41,7 +44,7 @@ def evaluate_model(model, processor, dataset_hf):
         pixel_values = processor(sample["image"].convert("RGB"), return_tensors="pt").pixel_values
         pixel_values = pixel_values.to(device)
         # prepare decoder inputs
-        task_prompt = "<s_cord-v2>"
+        task_prompt = PROMPT_TOKEN
         decoder_input_ids = processor.tokenizer(task_prompt, add_special_tokens=False, return_tensors="pt").input_ids
         decoder_input_ids = decoder_input_ids.to(device)
 
@@ -58,8 +61,6 @@ def evaluate_model(model, processor, dataset_hf):
                 bad_words_ids=[[processor.tokenizer.unk_token_id]],
                 return_dict_in_generate=True,
             )
-
-
 
         # turn into JSON
         seq = processor.batch_decode(outputs.sequences)[0]
@@ -101,6 +102,6 @@ if __name__ == "__main__":
     output_list, accs, scores = evaluate_model(model, processor, dataset_hf)
 
     # Save the results
-    # with open("evaluation_results.json", "w") as f:
-    #     json.dump({"outputs": output_list, "accuracies": accs, "scores": scores}, f, indent=4)
-    # print("Evaluation completed and results saved to evaluation_results.json")
+    with open(evaluation_result_path, "w") as f:
+        json.dump({"outputs": output_list, "accuracies": accs, "scores": scores}, f, indent=4)
+    print(f"Evaluation completed and results saved to {evaluation_result_path}")
