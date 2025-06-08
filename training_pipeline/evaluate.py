@@ -36,7 +36,7 @@ def evaluate_model(model, processor, dataset_hf):
     preds_for_f1 = []  
     gts_for_f1 = []    
 
-    val_dataset = load_dataset(dataset_hf, split=evaluation_split)
+    val_dataset = load_dataset(dataset_hf, split=evaluation_split, streaming=True)
     # val_dataset = dataset["validation"]
 
     for idx, sample in tqdm(enumerate(val_dataset), total=len(val_dataset)):
