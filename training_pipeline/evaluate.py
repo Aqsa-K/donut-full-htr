@@ -43,7 +43,7 @@ def evaluate_model(model, processor, dataset_hf):
     val_dataset = load_dataset(dataset_hf, split=evaluation_split, streaming=True)
     # val_dataset = dataset["validation"]
 
-    for idx, sample in tqdm(enumerate(val_dataset), num_samples):
+    for idx, sample in tqdm(enumerate(val_dataset), total=num_samples):
         # prepare encoder inputs
         pixel_values = processor(sample["image"].convert("RGB"), return_tensors="pt").pixel_values
         pixel_values = pixel_values.to(device)
