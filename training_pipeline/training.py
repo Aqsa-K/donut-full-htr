@@ -475,7 +475,7 @@ checkpoint_callback = ModelCheckpoint(
     verbose=True,
 )
 
-early_stop_callback = EarlyStopping(monitor="val_edit_distance", patience=3, verbose=False, mode="min")
+early_stop_callback = EarlyStopping(monitor="val_edit_distance", patience=5, verbose=True, mode="min")
 
 trainer = pl.Trainer(
         accelerator="gpu",
@@ -491,4 +491,4 @@ trainer = pl.Trainer(
         callbacks=[PushToHubCallback(), early_stop_callback, checkpoint_callback, ShowFewSamples(every_n_epochs=1, num_samples=2)],
 )
 
-trainer.fit(model_module)
+trainer.fit(model_module, ckpt_path="checkpoints_exp_3/donut-epochepoch=01-stepstep=134454.ckpt")
