@@ -35,6 +35,20 @@ sample_preds  = []          # tiny list, won’t blow up RAM
 num_samples = load_dataset_builder(dataset_hf).info.splits[split].num_examples
 ds_stream   = load_dataset(dataset_hf, split=split, streaming=True)
 
+def flatten_dict(d, parent_key="", sep="/"):
+    """
+    {'a':{'b':1}, 'c':2}  →  {'a/b': 1, 'c': 2}
+    """
+    items = {}
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.update(flatten_dict(v, new_key, sep=sep))
+        else:                       # treat lists / scalars the same way
+            items[new_key] = str(v) # cast to str to mimic Donut’s behaviour
+    return items
+
+
 # -------------------------------------------------------
 for sample in tqdm(ds_stream, total=num_samples, desc="evaluating"):
     pixel_values = processor(sample["image"].convert("RGB"),
@@ -70,8 +84,8 @@ for sample in tqdm(ds_stream, total=num_samples, desc="evaluating"):
     running_ted_sum += ted_acc
 
     # ---------- field-level TP / FP / FN ----------
-    p_flat = evaluator._flatten_dict(pred)
-    g_flat = evaluator._flatten_dict(gt)
+    p_flat = flatten_dict(pred)
+    g_flat = flatten_dict(gt)
 
     for k, v in p_flat.items():
         if k in g_flat and v == g_flat[k]:
