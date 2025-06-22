@@ -27,9 +27,15 @@ running_ted_sum  = 0.0
 count_docs       = 0
 
 tp = fp = fn = 0  # counters for micro-averaged field-F1
+mean_ted = 0.0 # nTED accuracy
+scores = {} # dict to store results
+precision = recall = field_f1 = 0.0 # # F1 score for fields
 
+# ----------------- for inspection -------------------
+ 
 KEEP_EXAMPLES = 20          # how many predictions to keep for inspection
 sample_preds  = []          # tiny list, won’t blow up RAM
+
 
 # --------- dataset size without loading it -------------
 num_samples = load_dataset_builder(dataset_hf).info.splits[split].num_examples
@@ -105,27 +111,34 @@ for sample in tqdm(ds_stream, total=num_samples, desc="evaluating"):
 
     count_docs += 1
 # ---------------- aggregate ---------------------------
-mean_ted = running_ted_sum / count_docs
+    mean_ted = running_ted_sum / count_docs
 
-precision = tp / (tp + fp) if (tp + fp) else 0.0
-recall    = tp / (tp + fn) if (tp + fn) else 0.0
-field_f1  = 2 * precision * recall / (precision + recall) if (precision + recall) else 0.0
+    precision = tp / (tp + fp) if (tp + fp) else 0.0
+    recall    = tp / (tp + fn) if (tp + fn) else 0.0
+    field_f1  = 2 * precision * recall / (precision + recall) if (precision + recall) else 0.0
 
-scores = {
-    "mean_ted_accuracy": mean_ted,
-    "field_f1": field_f1,
-    "num_docs": count_docs,
-}
-print(scores)
+    scores = {
+        "mean_ted_accuracy": mean_ted,
+        "field_f1": field_f1,
+        "num_docs": count_docs,
+        "precision": precision,
+        "recall": recall,
+        "tp": tp,
+        "fp": fp,
+    }
+    # print(scores)
 
-# -------------- save lite results ---------------------
-with open(result_path, "w") as f:
-    json.dump(
-        {
-            "scores": scores,
-            "samples": sample_preds,   # only KEEP_EXAMPLES items
-        },
-        f,
-        indent=2,
-    )
-print("Saved results to", result_path)
+    if count_docs % 100 == 0:
+        print(f"Processed {count_docs} documents, mean TED accuracy: {mean_ted:.4f}, field F1: {field_f1:.4f}")
+
+    # -------------- save lite results ---------------------
+    with open(result_path, "w") as f:
+        json.dump(
+            {
+                "scores": scores,
+                "samples": sample_preds,   # only KEEP_EXAMPLES items
+            },
+            f,
+            indent=2,
+        )
+    print("Saved results to", result_path)
