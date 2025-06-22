@@ -131,14 +131,14 @@ for sample in tqdm(ds_stream, total=num_samples, desc="evaluating"):
     if count_docs % 100 == 0:
         print(f"Processed {count_docs} documents, mean TED accuracy: {mean_ted:.4f}, field F1: {field_f1:.4f}")
 
-    # -------------- save lite results ---------------------
-    with open(result_path, "w") as f:
-        json.dump(
-            {
-                "scores": scores,
-                "samples": sample_preds,   # only KEEP_EXAMPLES items
-            },
-            f,
-            indent=2,
-        )
-    print("Saved results to", result_path)
+        # -------------- save lite results ---------------------
+        with open(result_path, "w") as f:
+            json.dump(
+                {
+                    "scores": scores,
+                    "samples": sample_preds,   # only KEEP_EXAMPLES items
+                },
+                f,
+                indent=2,
+            )
+        print("Saved results to", result_path)
