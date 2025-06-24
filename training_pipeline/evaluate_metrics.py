@@ -43,16 +43,27 @@ ds_stream   = load_dataset(dataset_hf, split=split, streaming=True)
 
 def flatten_dict(d, parent_key="", sep="/"):
     """
-    {'a':{'b':1}, 'c':2}  →  {'a/b': 1, 'c': 2}
+    Recursively flattens any mix of dicts & lists.
+    Keys become 'parent/child/0/grandchild' strings.
+    All leaf values are cast to str for stable equality tests.
     """
     items = {}
-    for k, v in d.items():
-        new_key = f"{parent_key}{sep}{k}" if parent_key else k
-        if isinstance(v, dict):
+
+    if isinstance(d, dict):
+        for k, v in d.items():
+            new_key = f"{parent_key}{sep}{k}" if parent_key else str(k)
             items.update(flatten_dict(v, new_key, sep=sep))
-        else:                       # treat lists / scalars the same way
-            items[new_key] = str(v) # cast to str to mimic Donut’s behaviour
+
+    elif isinstance(d, list):
+        for idx, v in enumerate(d):
+            new_key = f"{parent_key}{sep}{idx}" if parent_key else str(idx)
+            items.update(flatten_dict(v, new_key, sep=sep))
+
+    else:  # scalar leaf
+        items[parent_key] = str(d)
+
     return items
+
 
 
 # -------------------------------------------------------
