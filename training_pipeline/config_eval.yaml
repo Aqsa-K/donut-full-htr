@@ -1,5 +1,5 @@
 DATASET_HF: "AqsaK/testdataHW4"
-HF_MODEL_NAME: "AqsaK/donut-model-finetuned-all_cols" # whole dataset with FN EN and all other keys 
+HF_MODEL_NAME: "AqsaK/HW-1880-finetuned-all-cols" # whole dataset with FN EN and all other keys 
 PROMPT_TOKEN: "<s_census-v1>"
 EVALUATION_SPLIT: "test"
 EVALUATION_RESULT_PATH: "test_evaluation_results_exp_3.json"
