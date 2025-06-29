@@ -68,53 +68,57 @@ def flatten_dict(d, parent_key="", sep="/"):
 
 # -------------------------------------------------------
 for sample in tqdm(ds_stream, total=num_samples, desc="evaluating"):
-    pixel_values = processor(sample["image"].convert("RGB"),
-                             return_tensors="pt").pixel_values.to(device)
+    try:
+        pixel_values = processor(sample["image"].convert("RGB"),
+                                return_tensors="pt").pixel_values.to(device)
 
-    decoder_prompt = processor.tokenizer(
-        PROMPT_TOKEN, add_special_tokens=False, return_tensors="pt"
-    ).input_ids.to(device)
+        decoder_prompt = processor.tokenizer(
+            PROMPT_TOKEN, add_special_tokens=False, return_tensors="pt"
+        ).input_ids.to(device)
 
-    out = model.generate(
-        pixel_values,
-        decoder_input_ids=decoder_prompt,
-        max_length=model.decoder.config.max_position_embeddings,
-        pad_token_id=processor.tokenizer.pad_token_id,
-        eos_token_id=processor.tokenizer.eos_token_id,
-        bad_words_ids=[[processor.tokenizer.unk_token_id]],
-        num_beams=1,
-        early_stopping=True,
-        use_cache=True,
-        return_dict_in_generate=True,
-    )
+        out = model.generate(
+            pixel_values,
+            decoder_input_ids=decoder_prompt,
+            max_length=model.decoder.config.max_position_embeddings,
+            pad_token_id=processor.tokenizer.pad_token_id,
+            eos_token_id=processor.tokenizer.eos_token_id,
+            bad_words_ids=[[processor.tokenizer.unk_token_id]],
+            num_beams=1,
+            early_stopping=True,
+            use_cache=True,
+            return_dict_in_generate=True,
+        )
 
-    pred = processor.batch_decode(out.sequences)[0]
-    pred = pred.replace(processor.tokenizer.eos_token, "")\
-               .replace(processor.tokenizer.pad_token, "")
-    pred = re.sub(r"<.*?>", "", pred, count=1).strip()
-    pred = processor.token2json(pred)
+        pred = processor.batch_decode(out.sequences)[0]
+        pred = pred.replace(processor.tokenizer.eos_token, "")\
+                .replace(processor.tokenizer.pad_token, "")
+        pred = re.sub(r"<.*?>", "", pred, count=1).strip()
+        pred = processor.token2json(pred)
 
-    gt   = json.loads(sample["ground_truth"])["gt_parse"]
+        gt   = json.loads(sample["ground_truth"])["gt_parse"]
 
-    # ---------- nTED accuracy ----------
-    ted_acc = evaluator.cal_acc(pred, gt)
-    running_ted_sum += ted_acc
+        # ---------- nTED accuracy ----------
+        ted_acc = evaluator.cal_acc(pred, gt)
+        running_ted_sum += ted_acc
 
-    # ---------- field-level TP / FP / FN ----------
-    p_flat = flatten_dict(pred)
-    g_flat = flatten_dict(gt)
+        # ---------- field-level TP / FP / FN ----------
+        p_flat = flatten_dict(pred)
+        g_flat = flatten_dict(gt)
 
-    for k, v in p_flat.items():
-        if k in g_flat and v == g_flat[k]:
-            tp += 1
-        elif k in g_flat:
-            fp += 1   # wrong value
-        else:
-            fp += 1   # extra field
+        for k, v in p_flat.items():
+            if k in g_flat and v == g_flat[k]:
+                tp += 1
+            elif k in g_flat:
+                fp += 1   # wrong value
+            else:
+                fp += 1   # extra field
 
-    for k, v in g_flat.items():
-        if k not in p_flat:
-            fn += 1   # missing field
+        for k, v in g_flat.items():
+            if k not in p_flat:
+                fn += 1   # missing field
+    except Exception as e:
+        print(f"Error processing sample: {e}")
+        continue
 
     # -------- keep only a few preds for inspection -----
     if len(sample_preds) < KEEP_EXAMPLES:
